@@ -1,0 +1,21 @@
+# Node
+node_modules
+npm-debug.log
+
+# Git
+.git
+.gitignore
+
+# Env / secrets
+.env
+.env.*
+
+# Tests / docs
+coverage
+docs
+tests
+
+# OS/Editor
+.DS_Store
+.idea
+.vscode

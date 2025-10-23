@@ -1,0 +1,21 @@
+# Node
+node_modules
+npm-debug.log
+
+# Git
+.git
+.gitignore
+
+# Env
+.env
+.env.*
+
+# Source maps / build cache
+dist
+.vite
+coverage
+
+# OS/Editor
+.DS_Store
+.idea
+.vscode

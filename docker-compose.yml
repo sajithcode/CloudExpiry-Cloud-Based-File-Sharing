@@ -1,0 +1,65 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: filedb
+      MYSQL_USER: fileuser
+      MYSQL_PASSWORD: filepass
+      MYSQL_ROOT_PASSWORD: rootpass
+    # ports: ["3308:3306"]
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports: ["9000:9000", "9001:9001"]
+    volumes:
+      - minio_data:/data
+
+  server:
+    build: ./server
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=filedb
+      - DB_USER=fileuser
+      - DB_PASSWORD=filepass
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_USE_SSL=false
+      - MINIO_BUCKET=files
+      - JWT_SECRET=supersecret
+      - DOWNLOAD_BASE_URL=http://localhost:8080
+      - MAX_UPLOAD_MB=50
+    depends_on:
+      mysql:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    ports: ["8080:8080"]
+
+  client:
+    build: ./client
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080/api
+    depends_on:
+      - server
+    ports: ["5173:80"]
+
+volumes:
+  db_data:
+  minio_data:

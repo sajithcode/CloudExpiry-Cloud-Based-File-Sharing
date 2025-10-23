@@ -1,0 +1,41 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json # <-- keep if you prefer deterministic builds; otherwise remove this line
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Builds & caches
+dist/
+build/
+coverage/
+.cache/
+.tmp/
+.eslintcache
+
+# Logs
+logs/
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Misc
+*.tgz
+*.zip
+
+# Docker
+docker-data/
