@@ -7,7 +7,7 @@ services:
       MYSQL_USER: fileuser
       MYSQL_PASSWORD: filepass
       MYSQL_ROOT_PASSWORD: rootpass
-    # ports: ["3308:3306"]
+    ports: ["3309:3306"]
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
