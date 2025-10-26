@@ -1,0 +1,106 @@
+{
+  "info": {
+    "name": "Cloud File Expiry API",
+    "description": "Test collection for the Cloud File Expiry server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Root Endpoint",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": ["{{baseUrl}}"],
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "API Test - GET",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/test",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test"]
+        }
+      }
+    },
+    {
+      "name": "API Test - POST",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"message\": \"Testing POST request\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/test",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test"]
+        }
+      }
+    },
+    {
+      "name": "API Test - PUT",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated User\",\n  \"status\": \"active\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/test/123",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test", "123"]
+        }
+      }
+    },
+    {
+      "name": "API Test - DELETE",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/test/456",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "test", "456"]
+        }
+      }
+    }
+  ]
+}

@@ -29,7 +29,7 @@ services:
   server:
     build: ./server
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=8080
       - DB_HOST=mysql
       - DB_PORT=3306
@@ -51,6 +51,9 @@ services:
       minio:
         condition: service_started
     ports: ["8080:8080"]
+    volumes:
+      - ./server:/app
+      - /app/node_modules
 
   client:
     build: ./client
@@ -58,7 +61,10 @@ services:
       - VITE_API_BASE_URL=http://localhost:8080/api
     depends_on:
       - server
-    ports: ["5173:80"]
+    ports: ["5173:5173"]
+    volumes:
+      - ./client:/app
+      - /app/node_modules
 
 volumes:
   db_data:
