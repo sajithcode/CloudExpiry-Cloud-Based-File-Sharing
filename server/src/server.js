@@ -1,11 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 require("dotenv").config();
 
@@ -69,6 +71,10 @@ app.delete("/api/test/:id", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Auth routes
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
