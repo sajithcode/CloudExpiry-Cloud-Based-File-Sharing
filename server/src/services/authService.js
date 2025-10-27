@@ -4,16 +4,11 @@ const { User } = require("../models");
 
 class AuthService {
   async login(email, password) {
-    // For demo purposes, create a demo user if it doesn't exist
-    let user = await User.findOne({ where: { email } });
+    // Find user by email
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      // Create demo user with hashed password
-      const hashedPassword = await bcrypt.hash("demo123", 10);
-      user = await User.create({
-        email,
-        password: hashedPassword,
-      });
+      throw new Error("User not found");
     }
 
     // Verify password
