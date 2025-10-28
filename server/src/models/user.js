@@ -8,11 +8,16 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      User.hasMany(models.File, { foreignKey: "user_id", as: "files" });
     }
   }
   User.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -26,6 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "User",
+      tableName: "users",
+      underscored: true,
     }
   );
   return User;
