@@ -1,22 +1,25 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const { sequelize } = require("./models");
+const { ensureBucket } = require("./services/storageService");
+const { startCleanup } = require("./jobs/cleanupExpired");
+
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 require("dotenv").config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Root endpoint
 app.get("/", (req, res) => {
-  res.send("Hello World! Server Live Reload leo! 🚀");
-  console.log("Server endpoint hit - Live reload working!");
+  res.send("Cloud File Expiry API 🚀");
 });
 
 // Health check endpoint
@@ -29,53 +32,45 @@ app.get("/health", (req, res) => {
   });
 });
 
-// API routes for testing
-app.get("/api/test", (req, res) => {
-  res.json({
-    message: "GET request successful",
-    endpoint: "/api/test",
-    method: "GET",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-app.post("/api/test", (req, res) => {
-  res.json({
-    message: "POST request successful",
-    endpoint: "/api/test",
-    method: "POST",
-    body: req.body,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-app.put("/api/test/:id", (req, res) => {
-  const { id } = req.params;
-  res.json({
-    message: "PUT request successful",
-    endpoint: `/api/test/${id}`,
-    method: "PUT",
-    id: id,
-    body: req.body,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-app.delete("/api/test/:id", (req, res) => {
-  const { id } = req.params;
-  res.json({
-    message: "DELETE request successful",
-    endpoint: `/api/test/${id}`,
-    method: "DELETE",
-    id: id,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// Auth routes
+// API routes
 const authRoutes = require("./routes/auth");
-app.use("/api/auth", authRoutes);
+const fileRoutes = require("./routes/fileRoutes");
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.use("/api/auth", authRoutes);
+app.use("/api/files", fileRoutes);
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+  console.error(error);
+  res.status(500).json({ error: "Internal server error" });
 });
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: "Not found" });
+});
+
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Test database connection
+    await sequelize.authenticate();
+    console.log("Database connected successfully");
+
+    // Ensure MinIO bucket exists
+    await ensureBucket();
+    console.log("MinIO bucket ready");
+
+    // Start cleanup job
+    startCleanup();
+
+    app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
